@@ -13,6 +13,7 @@ pygame.display.set_caption("My Game")
 text_points = pygame.font.Font(None, FONT_SIZE)
 text_render = text_points.render(f'0 - 0', True, (100,100,100, 55))
 
+# Common player info
 player_info = {
     'width': 25,
     'height': 120,
