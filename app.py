@@ -2,6 +2,7 @@ import pygame
 from player import Player
 from ball import Ball
 from ball import Direction
+import arabic
 
 # pygame setup
 HEIGHT, WIDTH = 720, 1280
@@ -15,6 +16,8 @@ running = True
 pygame.display.set_caption("My Game")
 text_points = pygame.font.Font(None, FONT_SIZE)
 text_render = text_points.render('0 - 0', True, (100,100,100, 55))
+
+arabic = arabic.Arabic()
 
 player1 = Player(30, HEIGHT//2 - 60)
 player2 = Player(WIDTH - (30 + Player.width), HEIGHT//2 - 60)
@@ -67,6 +70,7 @@ def collisions():
             ball.direction = Direction.UPRIGHT
 
     if ball.rect.left <= -Ball.width*10 or ball.rect.left >= WIDTH + Ball.width*10:
+        arabic.ninth_chord.play()
         if ball.rect.left <= 0:
             player2.add_point()
         else:
@@ -78,13 +82,16 @@ def collisions():
         ball.reset(WIDTH, HEIGHT)
 
     if player1.rect.colliderect(ball.rect):
-        pygame.mixer.Sound("./sounds/1.mp3").play()
+        arabic.degrees[arabic.note_degree].play()
+        arabic.next_note()
         if ball.direction == Direction.DOWNLEFT:
             ball.direction = Direction.DOWNRIGHT
         else:
             ball.direction = Direction.UPRIGHT
 
     if player2.rect.colliderect(ball.rect):
+        arabic.degrees[arabic.note_degree].play()
+        arabic.next_note()
         if ball.direction == Direction.DOWNRIGHT:
             ball.direction = Direction.DOWNLEFT
         else:
