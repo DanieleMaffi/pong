@@ -1,119 +1,101 @@
 import pygame
-import random
+from player import Player
+from ball import Ball
+from ball import Direction
 
 # pygame setup
 HEIGHT, WIDTH = 720, 1280
 FONT_SIZE = 192
 
+pygame.mixer.init()
 pygame.init()
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 clock = pygame.time.Clock()
 running = True
 pygame.display.set_caption("My Game")
 text_points = pygame.font.Font(None, FONT_SIZE)
-text_render = text_points.render(f'0 - 0', True, (100,100,100, 55))
+text_render = text_points.render('0 - 0', True, (100,100,100, 55))
 
-# Common player info
-player_info = {
-    'width': 25,
-    'height': 120,
-    'velocity': 6,
-    'points': 0
-}
-player1 = pygame.Rect(30, HEIGHT//2 - 60, player_info['width'], player_info["height"])
-player2 = pygame.Rect(WIDTH - (30 + player_info["width"]), HEIGHT//2 - 60, player_info["width"], player_info["height"])
+player1 = Player(30, HEIGHT//2 - 60)
+player2 = Player(WIDTH - (30 + Player.width), HEIGHT//2 - 60)
 
-ball_info = {
-    'width': 30,
-    'height': 30,
-    'velocity': 3,
-    'points': 0
-}
-ball = pygame.Rect(WIDTH//2 - ball_info["width"]//2, HEIGHT//2 - ball_info["height"]//2, ball_info["width"], ball_info["height"])
-
-points = {
-    'player1': 0,
-    'player2': 0
-}
-
-class Direction:
-    UPLEFT = 1
-    DOWNLEFT = 2
-    DOWNRIGHT = 3
-    UPRIGHT = 4 
-
-def init_ball():
-    return random.randrange(1, 4)
+ball = Ball(WIDTH//2 - Ball.width//2, HEIGHT//2 - Ball.height//2)
 
 def movement():
     pressed_keyes = pygame.key.get_pressed()
-    if pressed_keyes[pygame.K_w] and player1.top > 0:
-        player1.top -= player_info['velocity']
-    if pressed_keyes[pygame.K_s] and player1.top < HEIGHT - player_info["height"]:
-        player1.top += player_info['velocity']
-    if pressed_keyes[pygame.K_UP] and player2.top > 0:
-        player2.top -= player_info['velocity']
-    if pressed_keyes[pygame.K_DOWN] and player2.top < HEIGHT - player_info["height"]:
-        player2.top += player_info['velocity']
+    if pressed_keyes[pygame.K_w] and player1.rect.top > 0:
+        player1.accelerate()
+        player1.rect.top -= player1.velocity
+    if pressed_keyes[pygame.K_s] and player1.rect.top < HEIGHT - Player.height:
+        player1.accelerate()
+        player1.rect.top += player1.velocity
+    if pressed_keyes[pygame.K_UP] and player2.rect.top > 0:
+        player2.accelerate()
+        player2.rect.top -= player2.velocity
+    if pressed_keyes[pygame.K_DOWN] and player2.rect.top < HEIGHT - Player.height:
+        player2.accelerate()
+        player2.rect.top += player2.velocity
 
-    if ball_direction == Direction.UPLEFT:
-        ball.top -= ball_info['velocity']
-        ball.left -= ball_info['velocity']
-    if ball_direction == Direction.DOWNLEFT:
-        ball.top += ball_info['velocity']
-        ball.left -= ball_info['velocity']
-    if ball_direction == Direction.DOWNRIGHT:
-        ball.top += ball_info['velocity']
-        ball.left += ball_info['velocity']
-    if ball_direction == Direction.UPRIGHT:
-        ball.top -= ball_info['velocity']
-        ball.left += ball_info['velocity']
+   # player1.accelerate(False)
+   # player2.accelerate(False)
+
+    if ball.direction == Direction.UPLEFT:
+        ball.rect.top -= Ball.velocity
+        ball.rect.left -= Ball.velocity
+    if ball.direction == Direction.DOWNLEFT:
+        ball.rect.top += Ball.velocity
+        ball.rect.left -= Ball.velocity
+    if ball.direction == Direction.DOWNRIGHT:
+        ball.rect.top += Ball.velocity
+        ball.rect.left += Ball.velocity
+    if ball.direction == Direction.UPRIGHT:
+        ball.rect.top -= Ball.velocity
+        ball.rect.left += Ball.velocity
 
 def collisions():
-    global ball_direction, player1, player2, text_render, points
-    if ball.top == 0:
-        if ball_direction == Direction.UPLEFT:
-            ball_direction = Direction.DOWNLEFT
+    global text_render
+    if ball.rect.top == 0:
+        if ball.direction == Direction.UPLEFT:
+            ball.direction = Direction.DOWNLEFT
         else:
-            ball_direction = Direction.DOWNRIGHT
+            ball.direction = Direction.DOWNRIGHT
 
-    if ball.top == HEIGHT - ball_info['height']:
-        if ball_direction == Direction.DOWNLEFT:
-            ball_direction = Direction.UPLEFT
+    if ball.rect.top == HEIGHT - Ball.height:
+        if ball.direction == Direction.DOWNLEFT:
+            ball.direction = Direction.UPLEFT
         else:
-            ball_direction = Direction.UPRIGHT
+            ball.direction = Direction.UPRIGHT
 
-    if ball.left <= -ball_info['width']*10 or ball.left >= WIDTH + ball_info['width']*10:
-        if ball.left <= 0:
-            points['player2'] += 1
+    if ball.rect.left <= -Ball.width*10 or ball.rect.left >= WIDTH + Ball.width*10:
+        if ball.rect.left <= 0:
+            player2.add_point()
         else:
-            points['player1'] += 1
-        ball.left = WIDTH//2 - ball_info["width"]//2
-        ball.top = HEIGHT//2 - ball_info["height"]//2
+            player1.add_point()
+        '''ball.rect.left = WIDTH//2 - Ball.width//2
+        ball.rect.top = HEIGHT//2 - Ball.height//2'''
             
-        text_render = text_points.render(f'{points["player1"]} - {points["player2"]}', True, (100,100,100, 50))
-        ball_direction = init_ball()
+        text_render = text_points.render(f'{player1.points} - {player2.points}', True, (100,100,100, 50))
+        ball.reset(WIDTH, HEIGHT)
 
-    if player1.colliderect(ball):
-        if ball_direction == Direction.DOWNLEFT:
-            ball_direction = Direction.DOWNRIGHT
+    if player1.rect.colliderect(ball.rect):
+        pygame.mixer.Sound("./sounds/1.mp3").play()
+        if ball.direction == Direction.DOWNLEFT:
+            ball.direction = Direction.DOWNRIGHT
         else:
-            ball_direction = Direction.UPRIGHT
+            ball.direction = Direction.UPRIGHT
 
-    if player2.colliderect(ball):
-        if ball_direction == Direction.DOWNRIGHT:
-            ball_direction = Direction.DOWNLEFT
+    if player2.rect.colliderect(ball.rect):
+        if ball.direction == Direction.DOWNRIGHT:
+            ball.direction = Direction.DOWNLEFT
         else:
-            ball_direction = Direction.UPLEFT
+            ball.direction = Direction.UPLEFT
 
 def draw_elements():
-    screen.fill((0,0,0))                                    # Setting the background
-    pygame.draw.rect(screen, (255,255,255, 1), player1)     # Drawing the player
-    pygame.draw.rect(screen, (255,255,255, 1), player2) 
-    pygame.draw.ellipse(screen, (255,255,255, 1), ball)
-    screen.blit(text_render, (WIDTH//2 - FONT_SIZE//1.5, HEIGHT//2 - FONT_SIZE//3))
-
-ball_direction = init_ball()
+    screen.fill((0,0,0))     
+    screen.blit(text_render, (WIDTH//2 - FONT_SIZE//1.5, HEIGHT//2 - FONT_SIZE//3))                               # Setting the background
+    pygame.draw.rect(screen, (255,255,255, 1), player1.rect)     # Drawing the player
+    pygame.draw.rect(screen, (255,255,255, 1), player2.rect) 
+    pygame.draw.ellipse(screen, (255,255,255, 1), ball.rect)
 
 while running:
     for event in pygame.event.get():
