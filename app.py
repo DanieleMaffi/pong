@@ -104,15 +104,16 @@ def draw_elements():
     pygame.draw.rect(screen, (255,255,255, 1), player2.rect) 
     pygame.draw.ellipse(screen, (255,255,255, 1), ball.rect)
 
-while running:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
+if __name__ == "__main__":
+    while running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
 
-    movement()
-    collisions()
-    draw_elements()
+        movement()
+        collisions()
+        draw_elements()
 
-    pygame.display.flip()                                   # Refreshing the screen
+        pygame.display.flip()                                   # Refreshing the screen
 
-pygame.quit()
+    pygame.quit()
