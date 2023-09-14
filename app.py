@@ -1,3 +1,4 @@
+import argparse
 import pygame
 from player import Player
 from ball import Ball
@@ -32,7 +33,7 @@ def direction_change_handler(player: Player):
         player.is_changing_direction = False
     return
 
-def movement():
+def movement(alone):
     pressed_keyes = pygame.key.get_pressed()
     if pressed_keyes[pygame.K_w] and player1.rect.top > 0:
         direction_change_handler(player1)
@@ -48,20 +49,6 @@ def movement():
             player1.is_changing_direction = True
         player1.last_direction = Direction.DOWN
 
-    if pressed_keyes[pygame.K_UP] and player2.rect.top > 0:
-        direction_change_handler(player2)
-        player2.rect.top -= player2.velocity
-        if player2.last_direction == Direction.DOWN:
-            player2.is_changing_direction = True
-        player2.last_direction = Direction.UP
-    
-    if pressed_keyes[pygame.K_DOWN] and player2.rect.top < HEIGHT - Player.height:
-        direction_change_handler(player2)
-        player2.rect.top += player2.velocity
-        if player2.last_direction == Direction.UP:
-            player2.is_changing_direction = True
-        player2.last_direction = Direction.DOWN
-
     if not pressed_keyes[pygame.K_w] and not pressed_keyes[pygame.K_s]:
         player1.accelerate(False)
         if player1.last_direction == Direction.UP:
@@ -70,13 +57,50 @@ def movement():
         elif player1.rect.top < WIDTH - Player.width:
             player1.rect.top += player1.velocity
 
-    if not pressed_keyes[pygame.K_UP] and not pressed_keyes[pygame.K_DOWN]:
+    if not alone:
+        if pressed_keyes[pygame.K_UP] and player2.rect.top > 0:
+            direction_change_handler(player2)
+            player2.rect.top -= player2.velocity
+            if player2.last_direction == Direction.DOWN:
+                player2.is_changing_direction = True
+            player2.last_direction = Direction.UP
+        
+        if pressed_keyes[pygame.K_DOWN] and player2.rect.top < HEIGHT - Player.height:
+            direction_change_handler(player2)
+            player2.rect.top += player2.velocity
+            if player2.last_direction == Direction.UP:
+                player2.is_changing_direction = True
+            player2.last_direction = Direction.DOWN
+
+        if not pressed_keyes[pygame.K_UP] and not pressed_keyes[pygame.K_DOWN]:
+            player2.accelerate(False)
+            if player2.last_direction == Direction.UP:
+                if player2.rect.top > 0:
+                    player2.rect.top -= player2.velocity
+            elif player2.rect.top < WIDTH - Player.width:
+                player2.rect.top += player2.velocity
+    else:
+        if ball.top < WIDTH//2:
+            direction_change_handler(player2)
+            player2.rect.top -= player2.velocity
+            if player2.last_direction == Direction.DOWN:
+                player2.is_changing_direction = True
+            player2.last_direction = Direction.UP
+        else:
+            direction_change_handler(player2)
+            player2.rect.top += player2.velocity
+            if player2.last_direction == Direction.UP:
+                player2.is_changing_direction = True
+            player2.last_direction = Direction.DOWN
+        
         player2.accelerate(False)
         if player2.last_direction == Direction.UP:
             if player2.rect.top > 0:
                 player2.rect.top -= player2.velocity
         elif player2.rect.top < WIDTH - Player.width:
             player2.rect.top += player2.velocity
+        
+
 
     if ball.direction == Direction.UPLEFT:
         ball.rect.top -= Ball.velocity
@@ -138,6 +162,12 @@ def draw_elements():
     pygame.draw.rect(screen, (255,255,255, 1), player2.rect) 
     pygame.draw.ellipse(screen, (255,255,255, 1), ball.rect)
 
+parser = argparse.ArgumentParser(description="Elaborato")
+parser.add_argument( "-a", "--alone", nargs='?', type=bool, default=False, const=True, help="Single player mode")
+args = parser.parse_args()
+
+alone = args.alone
+
 if __name__ == "__main__":
     while running:
         for event in pygame.event.get():
@@ -145,8 +175,7 @@ if __name__ == "__main__":
                 running = False
 
         clock.tick(144)
-
-        movement()
+        movement(alone)
         collisions()
         draw_elements()
 
