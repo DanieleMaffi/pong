@@ -27,6 +27,7 @@ class Player:
             else:
                 self.velocity -= self.acceleration
 
+    # Just moves the player given a direction
     def move(self, direction):
         if direction == Direction.UP:
             self.rect.top -= self.velocity
