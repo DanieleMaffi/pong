@@ -22,7 +22,16 @@ class Player:
         if accelerate and self.velocity < self.max_velocity:
             self.velocity += self.acceleration
         elif self.velocity > 0:
-            if self.velocity < 1:                   # To handle unprecise floating point arithmetic and prevent the number to go negative
+            if self.velocity < 1:                   # To handle unprecise floating point arithmetic and prevent the number going negative
                 self.velocity = 0
             else:
                 self.velocity -= self.acceleration
+
+    def move(self, direction):
+        if direction == Direction.UP:
+            self.rect.top -= self.velocity
+        else:
+            self.rect.top += direction
+
+    def __str__(self):
+        return f'Velocity: {self.velocity}\nIs Changing Direction: {"yes" if self.acceleration else "no"}\n'
