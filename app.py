@@ -31,7 +31,7 @@ def direction_change_handler(player: Player):
         print(player.velocity)
         player.is_changing_direction = False
     return
-
+#231233132131313
 def movement():
     pressed_keyes = pygame.key.get_pressed()
     if pressed_keyes[pygame.K_w] and player1.rect.top > 0:
