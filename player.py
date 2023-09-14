@@ -14,6 +14,7 @@ class Player:
         self.last_direction = Direction.IDLE
         self.is_changing_direction = False
 
+    # Adds a point to the player
     def add_point(self):
         self.points += 1
 
