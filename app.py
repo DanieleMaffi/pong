@@ -27,9 +27,7 @@ ball = Ball(WIDTH//2 - Ball.width//2, HEIGHT//2 - Ball.height//2)
 
 def direction_change_handler(player: Player):
     player.accelerate(False) if player.is_changing_direction else player.accelerate()
-    print(player.velocity)
     if player.velocity == 0:
-        print(player.velocity)
         player.is_changing_direction = False
     return
 
@@ -58,42 +56,40 @@ def movement(alone):
             player1.rect.top += player1.velocity
 
     if not alone:
+        direction_change_handler(player2)
         if pressed_keyes[pygame.K_UP] and player2.rect.top > 0:
-            direction_change_handler(player2)
-            player2.rect.top -= player2.velocity
+            #player2.rect.top -= player2.velocity
             if player2.last_direction == Direction.DOWN:
                 player2.is_changing_direction = True
             player2.last_direction = Direction.UP
         
         if pressed_keyes[pygame.K_DOWN] and player2.rect.top < HEIGHT - Player.height:
-            direction_change_handler(player2)
-            player2.rect.top += player2.velocity
+            #player2.rect.top += player2.velocity
             if player2.last_direction == Direction.UP:
                 player2.is_changing_direction = True
             player2.last_direction = Direction.DOWN
 
-        if not pressed_keyes[pygame.K_UP] and not pressed_keyes[pygame.K_DOWN]:
-            player2.accelerate(False)
-            if player2.last_direction == Direction.UP:
-                if player2.rect.top > 0:
-                    player2.rect.top -= player2.velocity
-            elif player2.rect.top < WIDTH - Player.width:
-                player2.rect.top += player2.velocity
+        #if not pressed_keyes[pygame.K_UP] and not pressed_keyes[pygame.K_DOWN]:
+            #player2.accelerate(False)
+        if player2.last_direction == Direction.UP:
+            if player2.rect.top > 0:
+                player2.rect.top -= player2.velocity
+        elif player2.rect.top < HEIGHT - Player.height:
+            player2.rect.top += player2.velocity
     else:
-        if ball.top < WIDTH//2:
+        if ball.rect.top < HEIGHT//2:
             direction_change_handler(player2)
-            player2.rect.top -= player2.velocity
+            #player2.rect.top -= player2.velocity
             if player2.last_direction == Direction.DOWN:
                 player2.is_changing_direction = True
             player2.last_direction = Direction.UP
         else:
             direction_change_handler(player2)
-            player2.rect.top += player2.velocity
+            #player2.rect.top += player2.velocity
             if player2.last_direction == Direction.UP:
                 player2.is_changing_direction = True
             player2.last_direction = Direction.DOWN
         
-        player2.accelerate(False)
         if player2.last_direction == Direction.UP:
             if player2.rect.top > 0:
                 player2.rect.top -= player2.velocity
