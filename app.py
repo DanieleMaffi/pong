@@ -29,26 +29,37 @@ def movement():
     if pressed_keyes[pygame.K_w] and player1.rect.top > 0:
         player1.accelerate()
         player1.rect.top -= player1.velocity
+        player1.last_direction = Direction.UP
 
     if pressed_keyes[pygame.K_s] and player1.rect.top < HEIGHT - Player.height:
         player1.accelerate()
         player1.rect.top += player1.velocity
+        player1.last_direction = Direction.DOWN
 
     if pressed_keyes[pygame.K_UP] and player2.rect.top > 0:
         player2.accelerate()
         player2.rect.top -= player2.velocity
+        player2.last_direction = Direction.UP
     
     if pressed_keyes[pygame.K_DOWN] and player2.rect.top < HEIGHT - Player.height:
         player2.accelerate()
         player2.rect.top += player2.velocity
+        player2.last_direction = Direction.DOWN
 
     if not pressed_keyes[pygame.K_w] and not pressed_keyes[pygame.K_s]:
         player1.accelerate(False)
-        player1.rect.top -= player1.velocity
+        if player1.last_direction == Direction.UP:
+            player1.rect.top -= player1.velocity
+        else:
+            player1.rect.top += player1.velocity
 
     if not pressed_keyes[pygame.K_UP] and not pressed_keyes[pygame.K_DOWN]:
         player2.accelerate(False)
         player2.rect.top -= player2.velocity
+        if player2.last_direction == Direction.UP:
+            player2.rect.top -= player2.velocity
+        else:
+            player2.rect.top += player2.velocity
 
     if ball.direction == Direction.UPLEFT:
         ball.rect.top -= Ball.velocity

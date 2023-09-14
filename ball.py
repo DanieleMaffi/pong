@@ -7,6 +7,8 @@ class Direction:
     DOWNRIGHT = 3
     UPRIGHT = 4
     IDLE = 5
+    UP = 6
+    DOWN = 7
 
 class Ball:
     width = 30

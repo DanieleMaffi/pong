@@ -1,4 +1,5 @@
 import pygame
+from ball import Direction
 
 class Player:
     width = 25
@@ -10,6 +11,7 @@ class Player:
         self.points = 0
         self.velocity = 0
         self.rect = pygame.Rect(left, top, Player.width, Player.height)
+        self.last_direction = Direction.IDLE
 
     def add_point(self):
         self.points += 1
