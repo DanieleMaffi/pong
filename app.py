@@ -24,10 +24,11 @@ player2 = Player(WIDTH - (30 + Player.width), HEIGHT//2 - 60)
 
 ball = Ball(WIDTH//2 - Ball.width//2, HEIGHT//2 - Ball.height//2)
 
-def direction_change_handler(player):
+def direction_change_handler(player: Player):
     player.accelerate(False) if player.is_changing_direction else player.accelerate()
-    print("yes") if player.is_changing_direction else print("no")
-    if player.acceleration == 0:
+    print(player.velocity)
+    if player.velocity == 0:
+        print(player.velocity)
         player.is_changing_direction = False
     return
 
@@ -48,28 +49,33 @@ def movement():
         player1.last_direction = Direction.DOWN
 
     if pressed_keyes[pygame.K_UP] and player2.rect.top > 0:
-        player2.accelerate()
+        direction_change_handler(player2)
         player2.rect.top -= player2.velocity
+        if player2.last_direction == Direction.DOWN:
+            player2.is_changing_direction = True
         player2.last_direction = Direction.UP
     
     if pressed_keyes[pygame.K_DOWN] and player2.rect.top < HEIGHT - Player.height:
-        player2.accelerate()
+        direction_change_handler(player2)
         player2.rect.top += player2.velocity
+        if player2.last_direction == Direction.UP:
+            player2.is_changing_direction = True
         player2.last_direction = Direction.DOWN
 
     if not pressed_keyes[pygame.K_w] and not pressed_keyes[pygame.K_s]:
         player1.accelerate(False)
         if player1.last_direction == Direction.UP:
-            player1.rect.top -= player1.velocity
-        else:
+            if player1.rect.top > 0:
+                player1.rect.top -= player1.velocity
+        elif player1.rect.top < WIDTH - Player.width:
             player1.rect.top += player1.velocity
 
     if not pressed_keyes[pygame.K_UP] and not pressed_keyes[pygame.K_DOWN]:
         player2.accelerate(False)
-        player2.rect.top -= player2.velocity
         if player2.last_direction == Direction.UP:
-            player2.rect.top -= player2.velocity
-        else:
+            if player2.rect.top > 0:
+                player2.rect.top -= player2.velocity
+        elif player2.rect.top < WIDTH - Player.width:
             player2.rect.top += player2.velocity
 
     if ball.direction == Direction.UPLEFT:
@@ -105,8 +111,6 @@ def collisions():
             player2.add_point()
         else:
             player1.add_point()
-        '''ball.rect.left = WIDTH//2 - Ball.width//2
-        ball.rect.top = HEIGHT//2 - Ball.height//2'''
             
         text_render = text_points.render(f'{player1.points} - {player2.points}', True, (100,100,100, 50))
         ball.reset(WIDTH, HEIGHT)
