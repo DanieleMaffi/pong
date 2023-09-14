@@ -14,7 +14,7 @@ class Player:
     def add_point(self):
         self.points += 1
 
-    # When False is appsed it will decelerate, otherwise True is default
+    # When False is appsed it will decelerate, otherwise accelerating is default
     def accelerate(self, accelerate=True):
         if accelerate and self.velocity < self.max_velocity:
             self.velocity += self.acceleration
