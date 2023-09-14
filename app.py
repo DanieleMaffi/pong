@@ -24,16 +24,27 @@ player2 = Player(WIDTH - (30 + Player.width), HEIGHT//2 - 60)
 
 ball = Ball(WIDTH//2 - Ball.width//2, HEIGHT//2 - Ball.height//2)
 
+def direction_change_handler(player):
+    player.accelerate(False) if player.is_changing_direction else player.accelerate()
+    print("yes") if player.is_changing_direction else print("no")
+    if player.acceleration == 0:
+        player.is_changing_direction = False
+    return
+
 def movement():
     pressed_keyes = pygame.key.get_pressed()
     if pressed_keyes[pygame.K_w] and player1.rect.top > 0:
-        player1.accelerate()
+        direction_change_handler(player1)
         player1.rect.top -= player1.velocity
+        if player1.last_direction == Direction.DOWN:
+            player1.is_changing_direction = True
         player1.last_direction = Direction.UP
 
     if pressed_keyes[pygame.K_s] and player1.rect.top < HEIGHT - Player.height:
-        player1.accelerate()
+        direction_change_handler(player1)
         player1.rect.top += player1.velocity
+        if player1.last_direction == Direction.UP:
+            player1.is_changing_direction = True
         player1.last_direction = Direction.DOWN
 
     if pressed_keyes[pygame.K_UP] and player2.rect.top > 0:

@@ -12,6 +12,7 @@ class Player:
         self.velocity = 0
         self.rect = pygame.Rect(left, top, Player.width, Player.height)
         self.last_direction = Direction.IDLE
+        self.is_changing_direction = False
 
     def add_point(self):
         self.points += 1
