@@ -2,6 +2,7 @@ import pygame
 from ball import Direction
 
 class Player:
+    # Static player values
     width = 25
     height = 120
     max_velocity = 6
