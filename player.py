@@ -7,6 +7,7 @@ class Player:
     height = 120
     max_velocity = 6
     acceleration = 0.1
+    friction = 0.08
 
     def __init__(self, left, top):
         self.points = 0
@@ -19,7 +20,7 @@ class Player:
     def add_point(self):
         self.points += 1
 
-    # When False is appsed it will decelerate, otherwise accelerating is default
+    # When False is passed it will decelerate, otherwise accelerating is default
     def accelerate(self, accelerate=True):
         if accelerate and self.velocity < self.max_velocity:
             self.velocity += self.acceleration
@@ -27,23 +28,35 @@ class Player:
             if self.velocity < 1:                   # To handle unprecise floating point arithmetic and prevent the number going negative
                 self.velocity = 0
             else:
-                self.velocity -= self.acceleration
+                self.velocity -= self.friction
 
     def _update_direction(self, direction):
-        if self.last_direction != direction:
+        if self.last_direction != direction and self.last_direction != Direction.IDLE:          # The second conditions will assure the variable doesn't become true when the first position is 'IDLE'
             self.is_changing_direction = True
-        if direction == Direction.UP:
+        if direction == Direction.UP  :
             self.last_direction = Direction.UP
         else:
             self.last_direction = Direction.DOWN
 
     # Just moves the player given a direction and updates 'is_changing_direction' if the previous direction is the opposite
     def move(self, direction, height=0):
-        if direction == Direction.UP and self.rect.top > 0:
-            self.rect.top -= self.velocity
-            
-        elif self.rect.top < height - self.height:
-            self.rect.top += self.velocity 
+        if self.is_changing_direction:
+            if direction == Direction.UP and self.rect.top > 0:
+                self.rect.top += self.velocity - self.acceleration - self.friction
+            elif self.rect.top < height - self.height:
+                self.rect.top -= self.velocity - self.acceleration - self.friction
+        else:
+            if direction == Direction.UP and self.rect.top > 0:
+                self.rect.top -= self.velocity
+            elif self.rect.top < height - self.height:
+                self.rect.top += self.velocity 
+
+        if self.rect.top >= height - self.height:
+            self.velocity = 0
+            self.rect.top = height - self.height
+        if self.rect.top < 0:
+            self.velocity = 0
+            self.rect.top = 0
 
         self._update_direction(direction)          
 

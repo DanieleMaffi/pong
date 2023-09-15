@@ -85,7 +85,7 @@ def collisions():
         else:
             player1.add_point()
             
-        text_render = text_points.render(f'{player1.points} - {player2.points}', True)
+        text_render = text_points.render(f'{player1.points} - {player2.points}', True, (100,100,100, 55))
         ball.reset(WIDTH, HEIGHT)
 
     # Handling collisions between the ball and the racket
