@@ -4,9 +4,13 @@ from player import Player
 from ball import Ball
 from ball import Direction
 import arabic
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # pygame setup
-HEIGHT, WIDTH = 720, 1280
+HEIGHT, WIDTH = os.getenv('HEIGHT'), os.getenv('WIDTH')
 FONT_SIZE = 192
 
 pygame.mixer.init()
