@@ -29,18 +29,30 @@ class Player:
             else:
                 self.velocity -= self.acceleration
 
+    def _update_direction(self, direction):
+        if self.last_direction != direction:
+            self.is_changing_direction = True
+        if direction == Direction.UP:
+            self.last_direction = Direction.UP
+        else:
+            self.last_direction = Direction.DOWN
+
     # Just moves the player given a direction and updates 'is_changing_direction' if the previous direction is the opposite
     def move(self, direction, height=0):
         if direction == Direction.UP and self.rect.top > 0:
             self.rect.top -= self.velocity
-            if self.last_direction == Direction.DOWN:
-                self.is_changing_direction = True
-            self.last_direction = Direction.UP
+            
         elif self.rect.top < height - self.height:
-            self.rect.top += self.velocity
-            if self.last_direction == Direction.UP:
-                self.is_changing_direction = True
-            self.last_direction = Direction.DOWN
+            self.rect.top += self.velocity 
+
+        self._update_direction(direction)          
+
+    # Makes the player slide according to the velocity left
+    def slide(self, height):
+        if self.last_direction == Direction.UP:
+            self.move(Direction.UP)
+        else:
+            self.move(Direction.DOWN, height)
 
     def __str__(self):
         return f'''Velocity: {self.velocity}\nIs Changing Direction: {"yes" if self.is_changing_direction else "no"}\nLast Direction: {self.last_direction}\n'''
