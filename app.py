@@ -14,7 +14,7 @@ pygame.init()
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 clock = pygame.time.Clock()
 running = True
-pygame.display.set_caption("My Game")
+pygame.display.set_caption("New Pong")
 text_points = pygame.font.Font(None, FONT_SIZE)
 text_render = text_points.render('0 - 0', True, (100,100,100, 55))
 
@@ -70,33 +70,14 @@ def movement(alone):
         else:
             player2.move(Direction.DOWN, HEIGHT)
         
-    if ball.direction == Direction.UPLEFT:
-        ball.rect.top -= Ball.velocity
-        ball.rect.left -= Ball.velocity
-    if ball.direction == Direction.DOWNLEFT:
-        ball.rect.top += Ball.velocity
-        ball.rect.left -= Ball.velocity
-    if ball.direction == Direction.DOWNRIGHT:
-        ball.rect.top += Ball.velocity
-        ball.rect.left += Ball.velocity
-    if ball.direction == Direction.UPRIGHT:
-        ball.rect.top -= Ball.velocity
-        ball.rect.left += Ball.velocity
+    ball.move()
 
 def collisions():
     global text_render
-    if ball.rect.top == 0:
-        if ball.direction == Direction.UPLEFT:
-            ball.direction = Direction.DOWNLEFT
-        else:
-            ball.direction = Direction.DOWNRIGHT
 
-    if ball.rect.top == HEIGHT - Ball.height:
-        if ball.direction == Direction.DOWNLEFT:
-            ball.direction = Direction.UPLEFT
-        else:
-            ball.direction = Direction.UPRIGHT
+    ball.bounce(HEIGHT)
 
+    # handling the point scoring and sound effects
     if ball.rect.left <= -Ball.width*10 or ball.rect.left >= WIDTH + Ball.width*10:
         arabic.ninth_chord.play()
         if ball.rect.left <= 0:
@@ -104,9 +85,10 @@ def collisions():
         else:
             player1.add_point()
             
-        text_render = text_points.render(f'{player1.points} - {player2.points}', True, (100,100,100, 50))
+        text_render = text_points.render(f'{player1.points} - {player2.points}', True)
         ball.reset(WIDTH, HEIGHT)
 
+    # Handling collisions between the ball and the racket
     if player1.rect.colliderect(ball.rect):
         arabic.degrees[arabic.note_degree].play()
         arabic.next_note()
@@ -130,7 +112,7 @@ def draw_elements():
     pygame.draw.rect(screen, (255,255,255, 1), player2.rect) 
     pygame.draw.ellipse(screen, (255,255,255, 1), ball.rect)
 
-parser = argparse.ArgumentParser(description="Elaborato")
+parser = argparse.ArgumentParser(description="New Pong")
 parser.add_argument( "-a", "--alone", nargs='?', type=bool, default=False, const=True, help="Single player mode")
 args = parser.parse_args()
 
@@ -144,11 +126,11 @@ if __name__ == "__main__":
 
         print(player2)
 
-        clock.tick(144)
+        delta_time = clock.tick(144)                # Setting FPSs and storing time between them in a variable
         movement(alone)
         collisions()
         draw_elements()
 
-        pygame.display.flip()                                   # Refreshing the screen
+        pygame.display.flip()                       # Refreshing the screen
 
     pygame.quit()
