@@ -30,7 +30,7 @@ class Player:
             else:
                 self.velocity -= self.friction
 
-    def _update_direction(self, direction):
+    def __update_direction(self, direction):
         if self.last_direction != direction and self.last_direction != Direction.IDLE:          # The second conditions will assure the variable doesn't become true when the first position is 'IDLE'
             self.is_changing_direction = True
         if direction == Direction.UP  :
@@ -58,7 +58,7 @@ class Player:
             self.velocity = 0
             self.rect.top = 0
 
-        self._update_direction(direction)          
+        self.__update_direction(direction)          
 
     # Makes the player slide according to the velocity left
     def slide(self, height):
