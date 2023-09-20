@@ -8,10 +8,11 @@ import os
 from dotenv import load_dotenv
 
 load_dotenv()
+HEIGHT, WIDTH = int(os.getenv('HEIGHT')), int(os.getenv('WIDTH'))
 
-# pygame setup
-HEIGHT, WIDTH = os.getenv('HEIGHT'), os.getenv('WIDTH')
-FONT_SIZE = 192
+FONT_SIZE = int(os.getenv('FONT_SIZE'))
+
+print(HEIGHT, WIDTH)
 
 pygame.mixer.init()
 pygame.init()
@@ -43,11 +44,11 @@ def movement(alone):
 
     if pressed_keyes[pygame.K_s]:
         direction_change_handler(player1)
-        player1.move(Direction.DOWN, HEIGHT)
+        player1.move(Direction.DOWN)
 
     if not pressed_keyes[pygame.K_w] and not pressed_keyes[pygame.K_s]:
         player1.accelerate(False)
-        player1.slide(HEIGHT)
+        player1.slide()
 
     if not alone:
         if pressed_keyes[pygame.K_UP]:
@@ -56,11 +57,11 @@ def movement(alone):
             
         if pressed_keyes[pygame.K_DOWN]:
             direction_change_handler(player2)
-            player2.move(Direction.DOWN, HEIGHT)
+            player2.move(Direction.DOWN)
 
         if not pressed_keyes[pygame.K_UP] and not pressed_keyes[pygame.K_DOWN]:
             player2.accelerate(False)
-            player2.slide(HEIGHT)
+            player2.slide()
     else:
         if ball.rect.top < HEIGHT//2:
             direction_change_handler(player2)
@@ -72,7 +73,7 @@ def movement(alone):
         if player2.last_direction == Direction.UP:
             player2.move(Direction.UP)
         else:
-            player2.move(Direction.DOWN, HEIGHT)
+            player2.move(Direction.DOWN)
         
     ball.move()
 
